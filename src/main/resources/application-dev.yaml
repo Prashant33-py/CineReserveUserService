@@ -1,0 +1,15 @@
+server:
+    port: 8082
+spring:
+    application:
+        name: CINE-RESERVE-USER-SERVICE
+
+    datasource:
+        driver-class-name:
+        url: jdbc:postgresql://${CINE_RESERVE_DATABASE_HOST}:${CINE_RESERVE_DATABASE_PORT}/${CINE_RESERVE_DATABASE_NAME}
+        username: ${CINE_RESERVE_DATABASE_USER}
+        password: ${CINE_RESERVE_DATABASE_PASSWORD}
+    jpa:
+        show-sql: true
+        hibernate:
+            ddl-auto: update
