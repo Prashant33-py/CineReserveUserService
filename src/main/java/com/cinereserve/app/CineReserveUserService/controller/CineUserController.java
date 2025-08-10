@@ -4,7 +4,13 @@ import com.cinereserve.app.CineReserveUserService.dto.LoginDTO;
 import com.cinereserve.app.CineReserveUserService.dto.RegisterUserDTO;
 import com.cinereserve.app.CineReserveUserService.model.CineUser;
 import com.cinereserve.app.CineReserveUserService.service.CineUserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.java.Log;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,8 +26,9 @@ public class CineUserController {
     }
 
     @PostMapping("login")
-    public ResponseEntity<String> login(@RequestBody LoginDTO loginUser) {
-        return cineUserService.login(loginUser);
+    public ResponseEntity<String> login(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization").substring(6);
+        return cineUserService.login(authHeader);
     }
 
     @PostMapping("register")

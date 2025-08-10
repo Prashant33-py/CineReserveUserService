@@ -4,9 +4,6 @@ import com.cinereserve.app.CineReserveUserService.dto.LoginDTO;
 import com.cinereserve.app.CineReserveUserService.dto.RegisterUserDTO;
 import com.cinereserve.app.CineReserveUserService.model.CineUser;
 import com.cinereserve.app.CineReserveUserService.repository.CineUserRepository;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,8 +12,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Base64;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CineUserService {
@@ -55,12 +52,14 @@ public class CineUserService {
         return new ResponseEntity<>(cineUserRepository.findAll(), HttpStatus.OK);
     }
 
-    public ResponseEntity<String> login(LoginDTO loginUser) {
+    public ResponseEntity<String> login(String authHeader) {
+        String[] authParts = new String(Base64.getDecoder().decode(authHeader)).split(":");
+        LoginDTO loginUser = new LoginDTO(authParts[0], authParts[1]);
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginUser.getUserName(), loginUser.getPassword())
         );
         if (authentication.isAuthenticated()) {
-            return jwtService.generateToken(loginUser.getUserName());
+            return jwtService.generateToken(loginUser.getUserName(), authentication.getAuthorities());
         } else {
             return new ResponseEntity<>("Invalid credentials", HttpStatus.UNAUTHORIZED);
         }

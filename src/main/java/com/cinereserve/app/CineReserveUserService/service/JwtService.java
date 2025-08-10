@@ -2,19 +2,19 @@ package com.cinereserve.app.CineReserveUserService.service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.impl.DefaultClaims;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This service is responsible for generating JWT tokens for user authentication.
@@ -22,8 +22,14 @@ import java.util.Map;
 @Service
 public class JwtService {
 
-    public ResponseEntity<String> generateToken(String userName) {
-        Map<String, Claims> claims = new HashMap<>();
+    @Value("${jwt.secret}")
+    private String secretKey;
+
+    public ResponseEntity<String> generateToken(String userName, Collection<? extends GrantedAuthority> authorities) {
+        Map<String, Object> claims = new HashMap<>();
+        for (GrantedAuthority authority : authorities) {
+            claims.put("role", authority.getAuthority());
+        }
 
         String jwtToken = Jwts.builder()
                 .subject(userName)
@@ -37,7 +43,7 @@ public class JwtService {
     }
 
     private Key getKey() {
-        return Keys.hmacShaKeyFor(generateSecretKey().getBytes());
+        return Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
     private String generateSecretKey() {
