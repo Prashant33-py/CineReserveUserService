@@ -17,7 +17,12 @@ public class CineUserPrincipal implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(CineUser.Role.USER.name()));
+        if (cineUser.getRole() == CineUser.Role.ADMIN) {
+            return List.of(new SimpleGrantedAuthority(CineUser.Role.ADMIN.name()), new SimpleGrantedAuthority(CineUser.Role.USER.name()));
+        }
+        else {
+            return List.of(new SimpleGrantedAuthority(CineUser.Role.USER.name()));
+        }
     }
 
     @Override

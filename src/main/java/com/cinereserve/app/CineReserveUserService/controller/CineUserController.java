@@ -1,16 +1,11 @@
 package com.cinereserve.app.CineReserveUserService.controller;
 
-import com.cinereserve.app.CineReserveUserService.dto.LoginDTO;
 import com.cinereserve.app.CineReserveUserService.dto.RegisterUserDTO;
 import com.cinereserve.app.CineReserveUserService.model.CineUser;
 import com.cinereserve.app.CineReserveUserService.service.CineUserService;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.java.Log;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,6 +32,7 @@ public class CineUserController {
     }
 
     @GetMapping("users")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<List<CineUser>> getUsers() {
         return cineUserService.getUsers();
     }

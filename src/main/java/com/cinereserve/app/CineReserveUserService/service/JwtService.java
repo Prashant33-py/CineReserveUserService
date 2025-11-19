@@ -27,8 +27,9 @@ public class JwtService {
 
     public ResponseEntity<String> generateToken(String userName, Collection<? extends GrantedAuthority> authorities) {
         Map<String, Object> claims = new HashMap<>();
+        List<GrantedAuthority> authorityList = new ArrayList<>(authorities);
         for (GrantedAuthority authority : authorities) {
-            claims.put("role", authority.getAuthority());
+            claims.put("role", authorityList.stream().map(GrantedAuthority::getAuthority).toList());
         }
 
         String jwtToken = Jwts.builder()
